@@ -113,7 +113,7 @@ News news = OkHttpManager.xxxx("http://news-at.zhihu.com/api/4/news/latest")  //
             ....  //中间的方法调用同异步请求
             .callSync(News.class);  //以News类型作为响应结果, 这里同样可以传入实体类、byte[]、String、InputStream、File、JSONObject、JSONArray，不再赘述
 
-//以回调的方式使用同步请求
+//以回调的方式使用同步请求
 //这里返回的disposable实际上用不到，因为是同步调用，返回disposable时，请求已经结束了，可以用其他方式取消请求(OkHttpManager.cancelXXX()、触发绑定的生命期自动取消请求)
 IDisposable disposable = OkHttpManager.xxxx("http://news-at.zhihu.com/api/4/news/latest")  //设置url，xxxx表示post、get、download、upload任意一个
             ....  //中间的方法调用同异步请求
@@ -135,9 +135,9 @@ IDisposable disposable = OkHttpManager.xxxx("http://news-at.zhihu.com/api/4/news
 
 
 //取消请求
-OkHttpManager.cancel(tag);  //通过tag取消指定的请求
+OkHttpManager.cancel(tag);  //通过tag取消指定的请求
 OkHttpManager.cancelAll(); //取消所有的请求
-disposable.cancel();   //通过请求返回的disposable取消，注意同步请求不要这样用
+disposable.cancel();   //通过请求返回的disposable取消，注意同步请求不要这样用
 disposable.isCanceled();  //请求是否已经取消
 
 ```
@@ -151,7 +151,7 @@ OkHttpManager.post("http://news-at.zhihu.com/api/4/news/latest")  //设置url
             .withParam("key2", "value2")
             .call(...);
 
-//POST一个字符串，如json
+//POST一个字符串，如json
 OkHttpManager.post("http://news-at.zhihu.com/api/4/news/latest", body)  //body是字符串，可以是json
                 .call(...);
 ```
@@ -190,7 +190,7 @@ OkHttpManager.download(url, PATH_TO_SAVE, enablePartial)  //设置下载文件�
                 }
             });
 
-//监听进度的回调,范型参数同样支持 实体类、byte[]、String、InputStream、File，实体类估计用不到，不过提供这个功能
+//监听进度的回调,范型参数同样支持 实体类、byte[]、String、InputStream、File，实体类估计用不到，不过提供这个功能
 
 ```
 
@@ -198,7 +198,7 @@ OkHttpManager.download(url, PATH_TO_SAVE, enablePartial)  //设置下载文件�
 
 #### 上传
 ```java
-OkHttpManager.upload(url, PATH_TO_YOUR_FILE)  //设置上传的url，文件路径
+OkHttpManager.upload(url, PATH_TO_YOUR_FILE)  //设置上传的url，文件路径
             .... //设置参数
             .call(new OkHttpProgressCallback<String>() {
                 @Override
