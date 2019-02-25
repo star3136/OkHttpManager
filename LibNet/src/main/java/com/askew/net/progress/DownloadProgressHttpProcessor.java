@@ -30,7 +30,7 @@ public class DownloadProgressHttpProcessor implements IHttpProcessor {
     }
 
     @Override
-    public Response afterResponse(Response response) {
+    public Response postResponse(Response response) {
         long[] ranges = null;
         if (response.code() == 206) {
             String contentRange = response.header("Content-Range");

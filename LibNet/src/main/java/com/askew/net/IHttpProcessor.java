@@ -12,5 +12,5 @@ import okhttp3.ResponseBody;
 public interface IHttpProcessor {
     Request preRequest(Request request);
 
-    Response afterResponse(Response response);
+    Response postResponse(Response response);
 }

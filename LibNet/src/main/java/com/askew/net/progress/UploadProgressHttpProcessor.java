@@ -25,7 +25,7 @@ public class UploadProgressHttpProcessor implements IHttpProcessor {
     }
 
     @Override
-    public Response afterResponse(Response response) {
+    public Response postResponse(Response response) {
         return response;
     }
 }

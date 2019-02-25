@@ -11,5 +11,5 @@ public abstract class OkHttpProgressCallback<T> extends OkHttpCallback<T> {
      * @param current
      * @param total
      */
-    public abstract void onProgress(final int progress, long current, long total);
+    public abstract void onProgress(int progress, long current, long total);
 }
