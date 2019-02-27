@@ -248,3 +248,20 @@ OkHttpManager.xxxx(...)
 
 ```
 
+### 使用方法
+项目根目录build.gradle添加如下:
+```
+allprojects {
+    repositories {
+        ...
+        maven { url 'https://jitpack.io' }
+    }
+}
+```
+
+添加依赖:
+````
+dependencies {
+        implementation 'com.github.star3136:OkHttpManager:version'
+}
+```
