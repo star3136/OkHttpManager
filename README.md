@@ -262,6 +262,6 @@ allprojects {
 添加依赖:
 ````
 dependencies {
-        implementation 'com.github.star3136:OkHttpManager:version'
+    implementation 'com.github.star3136:OkHttpManager:version'
 }
 ```
