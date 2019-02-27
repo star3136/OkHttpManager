@@ -49,7 +49,7 @@ IDisposable disposable = OkHttpManager.xxxx("http://news-at.zhihu.com/api/4/news
             .withParam("key2", "value2")
             .saveToFile(PATH_TO_YOUER_FILE)  //本次请求的响应存入指定的文件，可实现在请求的同时下载
             .tag(...)  //设置tag，用于cancel
-            .requestOn(OkSchedulers.io())    //指定本次请求的工作线程，如果不指定并且没有使用callSync()方法发起请求，则默认使用OkHttp自己的工作线程
+            .requestOn(OkSchedulers.io())    //指定本次请求的工作线程，如果不指定并且没有使用callSync()方法发起请求，则默认使用OkHttp自己的工作线程
             .responseOn(OkSchedulers.main())  //指定本次请求的回调线程，如果不指定则和工作线程在同一个线程
             .bindUntil(OkLifeCycles.OnDestroy(...))   //绑定生命周期，支持OnPause、OnStop、OnDestroy，参数可以是Activity或者Fragment
             .withHttpProcessor(...)  //请求之前和响应之后的拦截，后面续述
@@ -113,7 +113,7 @@ News news = OkHttpManager.xxxx("http://news-at.zhihu.com/api/4/news/latest")  //
             .callSync(News.class);  //以News类型作为响应结果, 这里同样可以传入实体类、byte[]、String、InputStream、File、JSONObject、JSONArray，不再赘述
 
 //以回调的方式使用同步请求
-//这里返回的disposable实际上用不到，因为是同步调用，返回disposable时，请求已经结束了，可以用其他方式取消请求(OkHttpManager.cancelXXX()、触发绑定的生命期自动取消请求)
+//这里返回的disposable实际上用不到，因为是同步调用，返回disposable时，请求已经结束了，可以用其他方式取消请求(OkHttpManager.cancelXXX()、触发绑定的生命期自动取消请求)
 IDisposable disposable = OkHttpManager.xxxx("http://news-at.zhihu.com/api/4/news/latest")  //设置url，xxxx表示post、get、download、upload任意一个
             ....  //中间的方法调用同异步请求
             .callSync(new OkHttpCallback<News>() {
