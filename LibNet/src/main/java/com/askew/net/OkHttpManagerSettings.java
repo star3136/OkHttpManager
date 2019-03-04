@@ -85,7 +85,6 @@ public class OkHttpManagerSettings {
         private OkHttpClient okHttpClient;
         private Map<String, String> httpHeaders = new HashMap<>();
         private Map<String, String> httpParams = new HashMap<>();
-        private List<IHttpProcessor> httpProcessors;
         private List<Interceptor> commonInterceptors;
         private List<Interceptor> commonNetworkInterceptors;
 
@@ -124,14 +123,6 @@ public class OkHttpManagerSettings {
                 return this;
             }
             this.httpParams.put(name, value);
-            return this;
-        }
-
-        public Builder withCommonHttpProcessor(IHttpProcessor httpProcessor) {
-            if (httpProcessors == null) {
-                httpProcessors = new ArrayList<>();
-            }
-            httpProcessors.add(httpProcessor);
             return this;
         }
 

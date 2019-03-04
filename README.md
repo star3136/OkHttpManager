@@ -28,7 +28,6 @@ OkHttpManager.newSettinsBuilder()
         .context(appContext)   //设置context，必须设置
         .okHttpClient(builder.build()) //设置OkHttpClient
         .withCommonHttpHeader("Content-Type", "application/json")  //设置全局header
-        .withCommonHttpHeader("Cookie", "XXX") //这样也可以设置Cookie/Session
         .withCommonHttpParam("commonKey1", "commonValue1") //设置公共参数
         .build()
         .init();
@@ -52,7 +51,8 @@ IDisposable disposable = OkHttpManager.xxxx("http://news-at.zhihu.com/api/4/news
             .requestOn(OkSchedulers.io())    //指定本次请求的工作线程，如果不指定并且没有使用callSync()方法发起请求，则默认使用OkHttp自己的工作线程
             .responseOn(OkSchedulers.main())  //指定本次请求的回调线程，如果不指定则和工作线程在同一个线程
             .bindUntil(OkLifeCycles.OnDestroy(...))   //绑定生命周期，支持OnPause、OnStop、OnDestroy，参数可以是Activity或者Fragment
-            .withHttpProcessor(...)  //请求之前和响应之后的拦截，后面续述
+            .withCommonInterceptor(...)  //设置OkHttp的本地级拦截器
+            .withCommonNetworkInterceptor(...) //设置OkHttp的网络级拦截器
             .call(new OkHttpCallback<byte[]>() { //设置回调，以byte[]类型作为响应结果
                 @Override
                 public void onResponse(Response response) {
@@ -69,7 +69,7 @@ IDisposable disposable = OkHttpManager.xxxx("http://news-at.zhihu.com/api/4/news
                     ...
                 }
                 @Override
-                public void onError(String msg) {
+                public void onError(Exception e) {
                     ...
                 }
 
@@ -101,7 +101,7 @@ OkHttpManager.xxxx("http://news-at.zhihu.com/api/4/news/latest")  //设置url，
                     ...
                 }
                 @Override
-                public void onError(String msg) {
+                public void onError(Exception e) {
                     ...
                 }
             });
@@ -127,7 +127,7 @@ IDisposable disposable = OkHttpManager.xxxx("http://news-at.zhihu.com/api/4/news
                     ...
                 }
                 @Override
-                public void onError(String msg) {
+                public void onError(Exception e) {
                     ...
                 }
             });
@@ -150,8 +150,8 @@ OkHttpManager.post("http://news-at.zhihu.com/api/4/news/latest")  //设置url
             .withParam("key2", "value2")
             .call(...);
 
-//POST一个字符串，如json
-OkHttpManager.post("http://news-at.zhihu.com/api/4/news/latest", body)  //body是字符串，可以是json
+//POST一个字符串或者字节数组
+OkHttpManager.post("http://news-at.zhihu.com/api/4/news/latest", body)  //body是字符串或字节数组，如json或者加密字节
                 .call(...);
 ```
 **注意:** 同时设置withParam()和body时，以body优先。
@@ -161,7 +161,7 @@ OkHttpManager.post("http://news-at.zhihu.com/api/4/news/latest", body)  //body�
 
 #### 下载
 ```java
-OkHttpManager.download(url, PATH_TO_SAVE, enablePartial)  //设置下载文件的url和存到本地的路径，PATH_TO_SAVE的效果同saveToFile(xxx)，enablePartial为true时启用断点续传功能
+OkHttpManager.download(url, FILE_DIR, FILE_NAME, enablePartial)  //设置下载文件的url和存到本地的路径，通过目录和文件名指定，也可以只指定目录，文件名从header中获取，获取不到会以时间戳作为文件名，enablePartial为true时启用断点续传功能
             ....  //设置参数
             .call(new OkHttpProgressCallback<File>() {  //设置下载进度监听，如果不需要监听进度直接设置OkHttpCallback即可
                 @Override
@@ -179,7 +179,7 @@ OkHttpManager.download(url, PATH_TO_SAVE, enablePartial)  //设置下载文件�
                     ...
                 }
                 @Override
-                public void onError(String msg) {
+                public void onError(Exception e) {
                     ...
                 }
 
@@ -215,7 +215,7 @@ OkHttpManager.upload(url, PATH_TO_YOUR_FILE)  //设置上传的url，文件路�
                     ...
                 }
                 @Override
-                public void onError(String msg) {
+                public void onError(Exception e) {
                     ...
                 }
 
@@ -233,17 +233,15 @@ OkHttp自带的拦截器是全局的，不能针对每一个请求，比如我�
 
 ```java
 OkHttpManager.xxxx(...)
-            .withHttpProcessor(new IHttpProcessor() {
+            .withHttpInterceptor(new Interceptor() { //本地级拦截器
                 @Override
-                public Request preRequest(Request request) {
-                    return request.newBuilder().post(new DesRequestBody(request.body())).build();  //设置Des加密的RequestBody
-                }
-
-                @Override
-                public Response postResponse(Response response) {
-                    return response.newBuilder().body(new DesResponseBody(response.body())).build(); //设置Des解密的ResponseBody
+                public Response intercept(Chain chain) throws IOException {
+                    Request request = chain.request();
+                    Response response = chain.proceed(request.newBuilder().post(new DesRequestBody(request.body())).build());
+                    return response.newBuilder().body(new DesResponseBody(response.body())).build();
                 }
             })
+            .withNetworkHttpInterceptor(...) //网络级拦截器
 
 ```
 
